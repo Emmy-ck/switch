@@ -13,13 +13,13 @@ export default function ComponentsDemo() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-light p-6">
+    <div className="min-h-screen bg-[var(--color-brand-light)] p-6">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="text-center fade-in">
-          <h1 className="text-4xl font-bold text-brand-dark mb-4">
+          <h1 className="text-4xl font-bold text-[var(--color-brand-dark)] mb-4">
             Component Library
           </h1>
-          <p className="text-lg text-brand-primary">
+          <p className="text-lg text-[var(--color-brand-primary)]">
             Reusable components for your Matatu Finder app
           </p>
         </div>
@@ -27,7 +27,7 @@ export default function ComponentsDemo() {
         {/* Buttons Section */}
         <Card className="slide-in-left">
           <CardHeader>
-            <h2 className="text-2xl font-semibold text-brand-dark">Buttons</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-brand-dark)]">Buttons</h2>
           </CardHeader>
           <CardBody>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -55,7 +55,7 @@ export default function ComponentsDemo() {
         {/* Inputs Section */}
         <Card className="slide-in-right">
           <CardHeader>
-            <h2 className="text-2xl font-semibold text-brand-dark">Inputs</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-brand-dark)]">Inputs</h2>
           </CardHeader>
           <CardBody>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,17 +87,17 @@ export default function ComponentsDemo() {
         {/* Badges Section */}
         <Card className="slide-in-bottom">
           <CardHeader>
-            <h2 className="text-2xl font-semibold text-brand-dark">Badges</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-brand-dark)]">Badges</h2>
           </CardHeader>
           <CardBody>
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
                 <Badge variant="primary">Primary</Badge>
                 <Badge variant="secondary">Secondary</Badge>
-                <Badge variant="success">Success</Badge>
-                <Badge variant="warning">Warning</Badge>
-                <Badge variant="error">Error</Badge>
-                <Badge variant="info">Info</Badge>
+                <Badge variant="accent">Accent</Badge>
+                <Badge variant="light">Light</Badge>
+                <Badge variant="dark">Dark</Badge>
+                <Badge variant="white">White</Badge>
               </div>
               
               <div className="flex flex-wrap gap-2">
@@ -112,7 +112,7 @@ export default function ComponentsDemo() {
         {/* Loading Section */}
         <Card className="scale-in">
           <CardHeader>
-            <h2 className="text-2xl font-semibold text-brand-dark">Loading States</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-brand-dark)]">Loading States</h2>
           </CardHeader>
           <CardBody>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -132,12 +132,12 @@ export default function ComponentsDemo() {
         {/* Usage Examples */}
         <Card className="fade-in delay-300">
           <CardHeader>
-            <h2 className="text-2xl font-semibold text-brand-dark">Usage Examples</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-brand-dark)]">Usage Examples</h2>
           </CardHeader>
           <CardBody>
             <div className="space-y-4">
-              <div className="bg-brand-light/50 p-4 rounded-lg">
-                <h3 className="font-semibold text-brand-dark mb-2">Form Example</h3>
+              <div className="p-4 rounded-lg bg-[var(--color-brand-light)]">
+                <h3 className="font-semibold text-[var(--color-brand-dark)] mb-2">Form Example</h3>
                 <div className="space-y-4">
                   <Input label="Route From" placeholder="Enter starting point" />
                   <Input label="Route To" placeholder="Enter destination" />
@@ -147,11 +147,11 @@ export default function ComponentsDemo() {
                 </div>
               </div>
               
-              <div className="bg-brand-light/50 p-4 rounded-lg">
-                <h3 className="font-semibold text-brand-dark mb-2">Status Display</h3>
+              <div className="p-4 rounded-lg bg-[var(--color-brand-light)]">
+                <h3 className="font-semibold text-[var(--color-brand-dark)] mb-2">Status Display</h3>
                 <div className="flex items-center gap-4">
-                  <Badge variant="success">Available</Badge>
-                  <span className="text-brand-dark">Route is currently active</span>
+                  <Badge variant="accent">Available</Badge>
+                  <span className="text-[var(--color-brand-dark)]">Route is currently active</span>
                 </div>
               </div>
             </div>

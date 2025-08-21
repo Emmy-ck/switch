@@ -26,17 +26,17 @@ const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
-    primary: 'bg-brand-primary text-white hover:bg-brand-accent focus:ring-brand-primary',
-    secondary: 'bg-brand-dark text-white hover:bg-brand-primary focus:ring-brand-dark',
-    outline: 'border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white focus:ring-brand-primary',
-    ghost: 'text-brand-primary hover:bg-brand-light focus:ring-brand-primary',
-  };
+    primary: 'bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] hover:bg-[var(--color-brand-accent)] focus:ring-[var(--color-brand-primary)]',
+    secondary: 'bg-[var(--color-brand-dark)] text-[var(--color-brand-white)] hover:bg-[var(--color-brand-primary)] focus:ring-[var(--color-brand-dark)]',
+    outline: 'border-2 border-[var(--color-brand-primary)] text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-brand-white)] focus:ring-[var(--color-brand-primary)]',
+    ghost: 'text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-light)] focus:ring-[var(--color-brand-primary)]',
+  } as const;
   
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
     md: 'px-4 py-2 text-base',
     lg: 'px-6 py-3 text-lg',
-  };
+  } as const;
   
   const widthClass = fullWidth ? 'w-full' : '';
   
@@ -50,7 +50,7 @@ const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
     >
       {loading && (
-        <div className="mr-2 w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+        <div className="mr-2 w-4 h-4 border-2 border-[var(--color-brand-white)] border-t-transparent rounded-full animate-spin" />
       )}
       {children}
     </button>

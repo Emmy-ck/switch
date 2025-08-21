@@ -32,10 +32,10 @@ const Card: React.FC<CardProps> = ({
     sm: 'shadow-sm',
     md: 'shadow-md',
     lg: 'shadow-lg',
-  };
+  } as const;
   
   const animationClass = animated ? 'hover:shadow-lg transition-shadow duration-300' : '';
-  const classes = `bg-white rounded-xl border border-brand-light ${shadowClasses[shadow]} ${animationClass} ${className}`;
+  const classes = `bg-[var(--color-brand-white)] rounded-xl border border-[var(--color-brand-light)] ${shadowClasses[shadow]} ${animationClass} ${className}`;
   
   return (
     <div className={classes}>
@@ -45,7 +45,7 @@ const Card: React.FC<CardProps> = ({
 };
 
 const CardHeader: React.FC<CardHeaderProps> = ({ children, className = '' }) => (
-  <div className={`px-6 py-4 border-b border-brand-light ${className}`}>
+  <div className={`px-6 py-4 border-b border-[var(--color-brand-light)] ${className}`}>
     {children}
   </div>
 );
@@ -57,7 +57,7 @@ const CardBody: React.FC<CardBodyProps> = ({ children, className = '' }) => (
 );
 
 const CardFooter: React.FC<CardFooterProps> = ({ children, className = '' }) => (
-  <div className={`px-6 py-4 border-t border-brand-light bg-brand-light/30 ${className}`}>
+  <div className={`px-6 py-4 border-t border-[var(--color-brand-light)] ${className}`}>
     {children}
   </div>
 );

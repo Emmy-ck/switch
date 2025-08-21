@@ -37,13 +37,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     sm: 'px-3 py-2 text-sm',
     md: 'px-4 py-2.5 text-base',
     lg: 'px-4 py-3 text-lg',
-  };
+  } as const;
 
   const baseClasses = 'w-full border rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0';
   const stateClasses = error 
-    ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
-    : 'border-brand-accent focus:ring-brand-primary focus:border-brand-primary';
-  const disabledClasses = disabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white';
+    ? 'border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] focus:border-[var(--color-brand-primary)]' 
+    : 'border-[var(--color-brand-accent)] focus:ring-[var(--color-brand-primary)] focus:border-[var(--color-brand-primary)]';
+  const disabledClasses = disabled ? 'bg-[var(--color-brand-light)] cursor-not-allowed opacity-60' : 'bg-[var(--color-brand-white)]';
   
   const classes = `${baseClasses} ${stateClasses} ${disabledClasses} ${sizeClasses[size]} ${className}`;
 
@@ -52,10 +52,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       {label && (
         <label 
           htmlFor={id || name} 
-          className="block text-sm font-medium text-brand-dark mb-2"
+          className="block text-sm font-medium text-[var(--color-brand-dark)] mb-2"
         >
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-[var(--color-brand-primary)] ml-1">*</span>}
         </label>
       )}
       
@@ -75,7 +75,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       />
       
       {error && (
-        <p className="mt-1 text-sm text-red-600 fade-in">
+        <p className="mt-1 text-sm text-[var(--color-brand-primary)] fade-in">
           {error}
         </p>
       )}

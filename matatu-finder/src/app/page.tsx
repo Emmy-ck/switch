@@ -1,11 +1,11 @@
-import Image from "next/image";
+import HomeClient from "./home-client";
 
 export default function Home() {
 	return (
-		<main className="min-h-screen flex items-center justify-center p-6">
-			<div className="text-center space-y-2">
-				<h1 className="text-2xl font-semibold">Matatu Finder</h1>
-				<p className="text-sm text-gray-500">Coming soon</p>
+		<main className="min-h-screen flex items-start justify-center p-6">
+			<div className="w-full">
+				<h1 className="text-2xl font-semibold text-center mb-6">Matatu Finder</h1>
+				<HomeClient />
 			</div>
 		</main>
 	);

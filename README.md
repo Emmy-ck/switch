@@ -25,7 +25,7 @@ Build a user-friendly app where people can:
 | Testing | React Testing Library + Jest |
 | Deployment | Vercel |
 
-## 🎨 Styling Guide
+<!-- ## 🎨 Styling Guide
 
 **Font:** [Inter](https://fonts.google.com/specimen/Inter)  
 
@@ -34,14 +34,35 @@ Build a user-friendly app where people can:
 
 body {
   font-family: 'Inter', sans-serif;
-}
+} -->
 
 ## 🎨 Colour Palette
 
 | Name         | Hex Code  | Preview |
 |--------------|-----------|---------|
-| Dark Brown   | `#59302C` | ![#59302C] |
-| Orange Red   | `#BF4209` | ![#BF4209] |
-| Burnt Orange | `#CC703D` | ![#CC703D] |
-| Cream        | `#FCE8CF` | ![#FCE8CF] |
-| White        | `#FFFFFF` | ![#FFFFFF] |
+| Dark Brown   | `#59302C` | ![#59302C](https://via.placeholder.com/20/59302C/000000?text=+) |
+| Orange Red   | `#BF4209` | ![#BF4209](https://via.placeholder.com/20/BF4209/000000?text=+) |
+| Burnt Orange | `#CC703D` | ![#CC703D](https://via.placeholder.com/20/CC703D/000000?text=+) |
+| Cream        | `#FCE8CF` | ![#FCE8CF](https://via.placeholder.com/20/FCE8CF/000000?text=+) |
+| White        | `#FFFFFF` | ![#FFFFFF](https://via.placeholder.com/20/FFFFFF/000000?text=+) |
+
+
+## 📄 Pages
+
+### 🏠 Home / Search Page  
+
+**Features**  
+- Two inputs: **Current Location** (GPS/manual) & **Destination**  
+- **Use My Location** button (with fallback)  
+- **Popular Destinations** quick-select list  
+- **Find My Matatu** CTA
+
+
+### 📍 Route Results Page  
+
+**Features**  
+- Shows **Recommended Stage** (where to board)  
+- Lists **Matatu Route Number(s)**  
+- Displays **Estimated Fare & Travel Time**  
+- Includes **Tips** (peak hours, alternatives)  
+- Alternatives in **collapssible section** 

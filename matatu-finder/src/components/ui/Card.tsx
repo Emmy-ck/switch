@@ -35,7 +35,7 @@ const Card: React.FC<CardProps> = ({
   } as const;
   
   const animationClass = animated ? 'hover:shadow-lg transition-shadow duration-300' : '';
-  const classes = `bg-[var(--color-brand-white)] rounded-xl border border-[var(--color-brand-light)] ${shadowClasses[shadow]} ${animationClass} ${className}`;
+  const classes = `bg-[var(--color-brand-light)] rounded-xl border border-[var(--color-brand-light)] ${shadowClasses[shadow]} ${animationClass} ${className}`;
   
   return (
     <div className={classes}>

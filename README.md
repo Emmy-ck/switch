@@ -40,7 +40,7 @@ body {
 
 | Name         | Hex Code  | Preview |
 |--------------|-----------|---------|
-| Dark Brown   | `#59302C` | ![#59302C](https://via.placeholder.com/20/59302C/000000?text=+) |
+| Dark Brown   | `#59302C` | ![#59302C] <span style="background-color:#59302C; padding:8px 20px; border-radius:4px; display:inline-block;"></span> |
 | Orange Red   | `#BF4209` | ![#BF4209](https://via.placeholder.com/20/BF4209/000000?text=+) |
 | Burnt Orange | `#CC703D` | ![#CC703D](https://via.placeholder.com/20/CC703D/000000?text=+) |
 | Cream        | `#FCE8CF` | ![#FCE8CF](https://via.placeholder.com/20/FCE8CF/000000?text=+) |

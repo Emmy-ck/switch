@@ -23,12 +23,12 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   fullWidth = false,
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
     primary: 'bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] hover:bg-[var(--color-brand-accent)] focus:ring-[var(--color-brand-primary)]',
     secondary: 'bg-[var(--color-brand-dark)] text-[var(--color-brand-white)] hover:bg-[var(--color-brand-primary)] focus:ring-[var(--color-brand-dark)]',
-    outline: 'border-2 border-[var(--color-brand-primary)] text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-brand-white)] focus:ring-[var(--color-brand-primary)]',
+    outline: 'text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-brand-white)] focus:ring-[var(--color-brand-primary)]',
     ghost: 'text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-light)] focus:ring-[var(--color-brand-primary)]',
   } as const;
   
@@ -40,12 +40,14 @@ const Button: React.FC<ButtonProps> = ({
   
   const widthClass = fullWidth ? 'w-full' : '';
   
-  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className}`;
+  // Only apply variant styles if no custom className is provided
+  const shouldApplyVariant = !className || className.trim() === '';
+  const classes = `${baseClasses} ${shouldApplyVariant ? variantClasses[variant] : ''} ${sizeClasses[size]} ${widthClass}`;
   
   return (
     <button
       type={type}
-      className={classes}
+      className={`${classes} ${className}`}
       disabled={disabled || loading}
       onClick={onClick}
     >

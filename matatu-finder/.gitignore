@@ -1,5 +1,4 @@
-
-/.history
+.history/
 
 # dependencies
 /node_modules

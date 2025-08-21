@@ -7,17 +7,16 @@ export default function HomePage() {
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const categories = ['All', 'Landmarks', 'Markets', 'Parks', 'Museums', 'Transit'] as const;
+  const categories = ['All', 'Landmarks', 'Markets', 'Parks', 'Museums'] as const;
   type Category = typeof categories[number];
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
   const destinations: Array<{ name: string; category: Category; description: string }> = [
     { name: 'CBD', category: 'Landmarks', description: 'Central Business District with key landmarks and offices.' },
     { name: 'Gikomba Market', category: 'Markets', description: 'Largest open-air market known for bargains.' },
     { name: 'Uhuru Park', category: 'Parks', description: 'Green space perfect for relaxation and walks.' },
-    { name: 'National Museum', category: 'Museums', description: 'Explore Kenya’s rich cultural and natural heritage.' },
+    { name: 'National Museum', category: 'Museums', description: 'Explore Kenya\'s rich cultural and natural heritage.' },
     { name: 'Westgate Mall', category: 'Markets', description: 'Modern shopping and dining destination in Westlands.' },
     { name: 'KICC', category: 'Landmarks', description: 'Iconic conference center with panoramic city views.' },
-    { name: 'Nairobi Railway Station', category: 'Transit', description: 'Key transit hub connecting city routes.' },
   ];
   const filteredDestinations = selectedCategory === 'All'
     ? destinations
@@ -39,7 +38,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-brand-light)]">
+    <div className="min-h-screen bg-[color-mix(in_srgb,var(--color-brand-light)_30%,white_70%)]">
       {/* Hero Section */}
       <div className="bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] py-16">
         <div className="max-w-6xl mx-auto px-6 text-center">
@@ -102,22 +101,26 @@ export default function HomePage() {
 
  
       {/* Popular Destinations Section */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="text-center mb-8 fade-in delay-300">
-          <h2 className="text-3xl font-bold text-[var(--color-brand-dark)] mb-4">Popular Destinations</h2>
-          <p className="text-lg text-[var(--color-brand-primary)]">Helping new users explore the city with ease</p>
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="flex justify-between items-center mb-4">
+          <div className="fade-in delay-300">
+            <h2 className="text-xl font-bold text-[var(--color-brand-dark)] mb-1">Popular Places</h2>
+          </div>
+          <Button variant="ghost" size="sm" className="text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-light)] text-sm">
+            See All
+          </Button>
         </div>
 
-        <div className="flex flex-wrap gap-3 justify-center mb-8">
+        <div className="flex flex-wrap gap-1 md:gap-1.5 justify-center mb-4">
           {categories.map((cat) => (
             <Button
               key={cat}
               variant="outline"
-              size="md"
-              className={selectedCategory === cat 
+              size="sm"
+              className={`text-xs md:text-sm px-2 md:px-3 py-1 md:py-1.5 ${selectedCategory === cat 
                 ? '!bg-[var(--color-brand-primary)] !text-[var(--color-brand-white)] !border-0 !border-none focus:!ring-0 focus:!ring-offset-0' 
-                : ''
-              }
+                : '!bg-[var(--color-brand-light)] !text-[var(--color-brand-dark)]'
+              }`}
               onClick={() => setSelectedCategory(cat as typeof categories[number])}
             >
               {cat}
@@ -125,13 +128,13 @@ export default function HomePage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredDestinations.map((dest) => (
             <Card key={dest.name} className="text-left">
-              <CardBody>
-                <h3 className="text-xl font-semibold text-[var(--color-brand-dark)] mb-2">{dest.name}</h3>
-                <p className="text-[var(--color-brand-primary)] mb-3">{dest.description}</p>
-                <span className="inline-block text-sm px-3 py-1 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
+              <CardBody className="p-3">
+                <h3 className="text-base font-semibold text-[var(--color-brand-dark)] mb-1">{dest.name}</h3>
+                <p className="text-xs text-[var(--color-brand-primary)] mb-1.5">{dest.description}</p>
+                <span className="inline-block text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
               </CardBody>
             </Card>
           ))}

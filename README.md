@@ -24,3 +24,24 @@ Build a user-friendly app where people can:
 | Data fetching | TanStack Query |
 | Testing | React Testing Library + Jest |
 | Deployment | Vercel |
+
+## 🎨 Styling Guide
+
+**Font:** [Inter](https://fonts.google.com/specimen/Inter)  
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+## 🎨 Colour Palette
+
+| Name         | Hex Code  | Preview |
+|--------------|-----------|---------|
+| Dark Brown   | `#59302C` | ![#59302C] |
+| Orange Red   | `#BF4209` | ![#BF4209] |
+| Burnt Orange | `#CC703D` | ![#CC703D] |
+| Cream        | `#FCE8CF` | ![#FCE8CF] |
+| White        | `#FFFFFF` | ![#FFFFFF] |

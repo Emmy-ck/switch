@@ -69,11 +69,19 @@ export default function HomePage() {
               </svg>
             </div>
           </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight">
-              Navigate Nairobi<br />with Ease!
-            </h1>
-          </div>
+        </div>
+      </div>
+
+      {/* Hero Section */}
+      <div className="bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] py-16">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-5xl md:text-6xl font-bold mb-6 fade-in">
+            Navigate Nairobi with Ease!
+          </h2>
+          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto slide-in-bottom">
+            Discover the fastest and most convenient routes across the city. 
+            Get real-time information about matatu routes, fares, and schedules.
+          </p>
         </div>
       </div>
 

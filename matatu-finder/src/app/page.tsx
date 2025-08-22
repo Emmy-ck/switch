@@ -78,10 +78,6 @@ export default function HomePage() {
           <h2 className="text-5xl md:text-6xl font-bold mb-6 fade-in">
             Navigate Nairobi with Ease!
           </h2>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto slide-in-bottom">
-            Discover the fastest and most convenient routes across the city. 
-            Get real-time information about matatu routes, fares, and schedules.
-          </p>
         </div>
       </div>
 

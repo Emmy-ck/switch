@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { LocationInput, Button, Card, CardHeader, CardBody } from '@/components';
+import Footer from '@/components/Footer';
 
 export default function HomePage() {
   const [fromLocation, setFromLocation] = useState('');
@@ -140,6 +141,7 @@ export default function HomePage() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

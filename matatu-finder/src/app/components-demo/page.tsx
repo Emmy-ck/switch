@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button, Card, CardHeader, CardBody, CardFooter, Input, Badge, Loading } from '@/components';
+import Footer from '@/components/Footer';
 
 export default function ComponentsDemo() {
   const [inputValue, setInputValue] = useState('');
@@ -158,6 +159,7 @@ export default function ComponentsDemo() {
           </CardBody>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 }

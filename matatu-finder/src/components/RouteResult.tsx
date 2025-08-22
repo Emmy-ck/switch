@@ -1,14 +1,19 @@
 import { useState } from "react";
 import type { RouteMatch } from "@/lib/types";
 import { getStopById } from "@/lib/data";
+import RouteBreakdown from "./RouteBreakdown";
+import RouteMapView from "./RouteMapView";
 
 type Props = {
 	match: RouteMatch;
 	isExpanded?: boolean;
 	onToggleExpand?: () => void;
+	showDetailedBreakdown?: boolean;
 };
 
-export default function RouteResult({ match, isExpanded = false, onToggleExpand }: Props) {
+export default function RouteResult({ match, isExpanded = false, onToggleExpand, showDetailedBreakdown = false }: Props) {
+	const [showMapView, setShowMapView] = useState(false);
+	const [showBreakdown, setShowBreakdown] = useState(false);
 	const { route, fromStopId, toStopId, stopsBetween, estimatedFare } = match;
 	const fromStop = getStopById(fromStopId);
 	const toStop = getStopById(toStopId);
@@ -81,6 +86,38 @@ export default function RouteResult({ match, isExpanded = false, onToggleExpand 
 			{/* Expanded Details */}
 			{isExpanded && (
 				<div className="border-t bg-gray-50 p-4">
+					{/* Action Buttons */}
+					<div className="flex gap-2 mb-4">
+						<button
+							onClick={() => setShowBreakdown(!showBreakdown)}
+							className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+						>
+							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+							</svg>
+							{showBreakdown ? 'Hide' : 'Show'} Journey Breakdown
+						</button>
+						<button
+							onClick={() => setShowMapView(true)}
+							className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+						>
+							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7" />
+							</svg>
+							View on Map
+						</button>
+					</div>
+
+					{/* Journey Breakdown */}
+					{showBreakdown && (
+						<div className="mb-4">
+							<RouteBreakdown 
+								match={match} 
+								onViewMap={() => setShowMapView(true)}
+							/>
+						</div>
+					)}
+
 					<div className="space-y-4">
 						{/* Route Path */}
 						<div>
@@ -169,6 +206,14 @@ export default function RouteResult({ match, isExpanded = false, onToggleExpand 
 					{isExpanded ? 'Click to collapse' : 'Click to view details'}
 				</div>
 			</div>
+
+			{/* Map View Modal */}
+			{showMapView && (
+				<RouteMapView 
+					match={match} 
+					onClose={() => setShowMapView(false)}
+				/>
+			)}
 		</div>
 	);
 }

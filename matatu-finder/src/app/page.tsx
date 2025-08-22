@@ -10,6 +10,8 @@ export default function HomePage() {
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [locationError, setLocationError] = useState('');
   const categories = ['All', 'Landmarks', 'Markets', 'Parks', 'Museums'] as const;
   type Category = typeof categories[number];
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
@@ -25,24 +27,74 @@ export default function HomePage() {
     ? destinations
     : destinations.filter((d) => d.category === selectedCategory);
 
+  const getCurrentLocation = async () => {
+    setIsGettingLocation(true);
+    setLocationError('');
+
+    if (!navigator.geolocation) {
+      setLocationError('GPS not supported by this browser');
+      setIsGettingLocation(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          // Simulate reverse geocoding - in real app, use Google Maps API or similar
+          const { latitude, longitude } = position.coords;
+          
+          // Mock location name based on coordinates (replace with actual reverse geocoding)
+          const locationName = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+          
+          setFromLocation(locationName);
+          setLocationError('');
+          setIsGettingLocation(false);
+        } catch (error) {
+          setLocationError('Failed to get location name');
+          setIsGettingLocation(false);
+        }
+      },
+      (error) => {
+        let errorMessage = 'Failed to get location';
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied. Please enable location permissions.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information unavailable.';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out.';
+            break;
+        }
+        setLocationError(errorMessage);
+        setIsGettingLocation(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000
+      }
+    );
+  };
+
+  const handleDestinationClick = (destinationName: string) => {
+    setToLocation(destinationName);
+  };
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fromLocation.trim() || !toLocation.trim()) return;
 
     setIsSearching(true);
     
-    // Simulate search delay for better UX
-    setTimeout(() => {
-      setIsSearching(false);
-      
-      // Navigate to results page with search parameters
-      const searchParams = new URLSearchParams({
-        from: fromLocation.trim(),
-        to: toLocation.trim()
-      });
-      
-      router.push(`/results?${searchParams.toString()}`);
-    }, 1500);
+    // Navigate to results page immediately with loading state
+    const searchParams = new URLSearchParams({
+      from: fromLocation.trim(),
+      to: toLocation.trim()
+    });
+    
+    router.push(`/results?${searchParams.toString()}`);
   };
 
   return (
@@ -73,15 +125,11 @@ export default function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <div className="bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] py-16">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 fade-in">
+      <div className="bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] py-4">
+        <div className="max-w-6xl mx-auto px-6 text-left">
+          <h3 className="text-3xl md:text-4xl font-bold mb-4 fade-in">
             Navigate Nairobi with Ease!
-          </h2>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto slide-in-bottom">
-            Discover the fastest and most convenient routes across the city. 
-            Get real-time information about matatu routes, fares, and schedules.
-          </p>
+          </h3>
         </div>
       </div>
 
@@ -92,15 +140,39 @@ export default function HomePage() {
             <form onSubmit={handleSearch}>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <LocationInput
-                    label="From"
-                    value={fromLocation}
-                    onChange={(e) => setFromLocation(e.target.value)}
-                    placeholder="Enter starting point"
-                    name="from"
-                    id="from"
-                    autoComplete="off"
-                  />
+                  <div className="space-y-2">
+                    <LocationInput
+                      label="From"
+                      value={fromLocation}
+                      onChange={(e) => setFromLocation(e.target.value)}
+                      placeholder="Enter starting point"
+                      name="from"
+                      id="from"
+                      autoComplete="off"
+                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={getCurrentLocation}
+                        loading={isGettingLocation}
+                        disabled={isGettingLocation}
+                        className="flex items-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {isGettingLocation ? 'Getting Location...' : 'Use My Location'}
+                      </Button>
+                    </div>
+                    {locationError && (
+                      <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
+                        {locationError}
+                      </div>
+                    )}
+                  </div>
                   <LocationInput
                     label="To"
                     value={toLocation}
@@ -158,13 +230,19 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredDestinations.map((dest) => (
-            <Card key={dest.name} className="text-left">
-              <CardBody className="p-3">
-                <h3 className="text-base font-semibold text-[var(--color-brand-dark)] mb-1">{dest.name}</h3>
-                <p className="text-xs text-[var(--color-brand-primary)] mb-1.5">{dest.description}</p>
-                <span className="inline-block text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
-              </CardBody>
-            </Card>
+            <div 
+              key={dest.name} 
+              className="cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105"
+              onClick={() => handleDestinationClick(dest.name)}
+            >
+              <Card className="text-left h-full">
+                <CardBody className="p-3">
+                  <h3 className="text-base font-semibold text-[var(--color-brand-dark)] mb-1">{dest.name}</h3>
+                  <p className="text-xs text-[var(--color-brand-primary)] mb-1.5">{dest.description}</p>
+                  <span className="inline-block text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
+                </CardBody>
+              </Card>
+            </div>
           ))}
         </div>
       </div>

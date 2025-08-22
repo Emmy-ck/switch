@@ -26,6 +26,8 @@ export type Route = {
 		peak?: number; // peak fare in KES
 	};
 	segments?: RouteSegment[];
+	sacco?: string; // Sacco name
+	estimatedTime?: number; // estimated travel time in minutes
 };
 
 export type StopSearchResult = Stop & {

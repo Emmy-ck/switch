@@ -26,6 +26,8 @@ export const routes: Route[] = [
 		name: "CBD → Kawangware",
 		stops: ["CBD_Archives", "Kencom", "Westlands", "Kawangware"],
 		fare: { base: 60, peak: 100 },
+		sacco: "Kawangware Sacco",
+		estimatedTime: 45,
 	},
 	{
 		id: "111",
@@ -33,6 +35,8 @@ export const routes: Route[] = [
 		name: "CBD → Ngong",
 		stops: ["Railways", "UpperHill", "Karen", "Ngong"],
 		fare: { base: 80, peak: 130 },
+		sacco: "Ngong Road Sacco",
+		estimatedTime: 60,
 	},
 	{
 		id: "15",
@@ -40,6 +44,8 @@ export const routes: Route[] = [
 		name: "CBD → Buruburu → Donholm",
 		stops: ["Railways", "Buruburu", "Donholm"],
 		fare: { base: 50, peak: 90 },
+		sacco: "Eastlands Sacco",
+		estimatedTime: 35,
 	},
 	{
 		id: "34",
@@ -47,6 +53,8 @@ export const routes: Route[] = [
 		name: "CBD → Lang'ata → Karen",
 		stops: ["Railways", "Langata", "Karen"],
 		fare: { base: 70, peak: 120 },
+		sacco: "South B Sacco",
+		estimatedTime: 50,
 	},
 	{
 		id: "105",
@@ -54,6 +62,8 @@ export const routes: Route[] = [
 		name: "CBD → Westlands → Kikuyu",
 		stops: ["CBD_Archives", "Westlands", "Kikuyu"],
 		fare: { base: 100, peak: 150 },
+		sacco: "Kikuyu Sacco",
+		estimatedTime: 75,
 	},
 ];
 

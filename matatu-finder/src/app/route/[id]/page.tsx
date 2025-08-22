@@ -1,125 +1,76 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { routes, getStopById } from '@/lib/data';
+import { useParams } from 'next/navigation';
 
 export default function ExtendedRoutePage() {
   const params = useParams();
-  const router = useRouter();
-  const routeId = params.id as string;
-  
-  // Find the actual route data
-  const route = routes.find(r => r.id === routeId);
-  
-  if (!route) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold text-gray-800 mb-2">Route not found</h1>
-          <button 
-            onClick={() => router.push('/')}
-            className="text-[var(--color-brand-primary)] hover:underline"
-          >
-            Return to search
-          </button>
-        </div>
-      </div>
-    );
-  }
-  
-  // Get stop details for the route
-  const routeStops = route.stops.map(stopId => getStopById(stopId)).filter(Boolean);
-  const startStop = routeStops[0];
-  const endStop = routeStops[routeStops.length - 1];
+  const routeId = params.id;
 
-  const handleBackClick = () => {
-    router.back();
-  };
-
-  const handleHomeClick = () => {
-    router.push('/');
-  };
-
-  // Generate route steps from real data
   const routeSteps = [
     {
       id: 1,
       type: 'start',
-      location: startStop?.name || 'Start',
+      location: 'Kencom House',
       time: '10:30 AM',
-      description: `Start location: ${startStop?.landmarks?.[0] || startStop?.name}`,
+      description: 'Start location: City Hall way Nairobi',
       walkTime: null,
       walkDistance: null
     },
     {
       id: 2,
       type: 'walk',
-      location: 'Walk to matatu stop',
+      location: 'Walk',
       time: null,
       description: null,
-      walkTime: '3 min',
-      walkDistance: '200m'
+      walkTime: '5 min',
+      walkDistance: '400m'
     },
     {
       id: 3,
       type: 'transport',
-      location: `Board ${route.name}`,
-      time: '10:33 AM',
-      description: route.sacco || 'Matatu Service',
-      walkTime: `${route.estimatedTime || 45} min`,
-      walkDistance: `${Math.round((routeStops.length - 1) * 2.5)}km`,
-      routeNumber: route.number
-    }
-  ];
-
-  // Add intermediate stops if any
-  if (routeStops.length > 2) {
-    const middleStops = routeStops.slice(1, -1);
-    middleStops.forEach((stop, index) => {
-      routeSteps.push({
-        id: routeSteps.length + 1,
-        type: 'stop',
-        location: stop?.name || `Stop ${index + 1}`,
-        time: `10:${35 + (index * 5)} AM`,
-        description: stop?.landmarks?.[0] || null,
-        walkTime: null,
-        walkDistance: null
-      } as any);
-    });
-  }
-
-  // Add final steps
-  routeSteps.push(
-    {
-      id: routeSteps.length + 1,
-      type: 'walk',
-      location: 'Walk to destination',
-      time: null,
-      description: null,
-      walkTime: '2 min',
-      walkDistance: '150m'
+      location: 'Tusker / Burudani Ngara',
+      time: '10:36 AM',
+      description: 'Ummoinner',
+      walkTime: '35 min',
+      walkDistance: '11km',
+      routeNumber: '46'
     },
     {
-      id: routeSteps.length + 2,
-      type: 'end',
-      location: endStop?.name || 'Destination',
-      time: `10:${35 + (route.estimatedTime || 45)} AM`,
-      description: endStop?.landmarks?.[0] || null,
+      id: 4,
+      type: 'stop',
+      location: 'Carmer Junction',
+      time: '10:41 AM',
+      description: null,
       walkTime: null,
       walkDistance: null
-    } as any
-  );
+    },
+    {
+      id: 5,
+      type: 'walk',
+      location: 'Walk',
+      time: null,
+      description: null,
+      walkTime: '3 min',
+      walkDistance: '100m'
+    },
+    {
+      id: 6,
+      type: 'end',
+      location: 'Umoja 1',
+      time: '10:43 AM',
+      description: null,
+      walkTime: null,
+      walkDistance: null
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--color-brand-primary)] to-[var(--color-brand-accent)]">
       {/* Header */}
       <div className="bg-gradient-to-r from-[var(--color-brand-primary)] to-[var(--color-brand-accent)] text-[var(--color-brand-white)] px-4 py-4">
         <div className="flex items-center justify-between">
-          <button 
-            onClick={handleBackClick}
-            className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-          >
+          <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
@@ -133,7 +84,7 @@ export default function ExtendedRoutePage() {
       <div className="bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium">{startStop?.name || 'Start'}</span>
+            <span className="text-sm font-medium">Kencom</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
@@ -142,7 +93,7 @@ export default function ExtendedRoutePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span className="text-sm font-medium">{endStop?.name || 'Destination'}</span>
+            <span className="text-sm font-medium">Umoja 1</span>
           </div>
         </div>
       </div>
@@ -221,7 +172,7 @@ export default function ExtendedRoutePage() {
       {/* Bottom Navigation */}
       <div className="bg-[var(--color-brand-white)] border-t border-gray-200 px-4 py-3">
         <div className="flex justify-around items-center">
-          <button onClick={handleHomeClick} className="flex flex-col items-center space-y-1">
+          <button className="flex flex-col items-center space-y-1">
             <div className="w-6 h-6 bg-[var(--color-brand-primary)] rounded flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>

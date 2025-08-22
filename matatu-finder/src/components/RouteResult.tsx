@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { RouteMatch } from "@/lib/types";
 import { getStopById } from "@/lib/data";
 
@@ -10,15 +9,9 @@ type Props = {
 };
 
 export default function RouteResult({ match, isExpanded = false, onToggleExpand }: Props) {
-	const router = useRouter();
 	const { route, fromStopId, toStopId, stopsBetween, estimatedFare } = match;
 	const fromStop = getStopById(fromStopId);
 	const toStop = getStopById(toStopId);
-
-	const handleViewDetails = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		router.push(`/route/${route.id}`);
-	};
 
 	const formatTime = (minutes: number) => {
 		const hours = Math.floor(minutes / 60);
@@ -170,17 +163,11 @@ export default function RouteResult({ match, isExpanded = false, onToggleExpand 
 				</div>
 			)}
 
-			{/* Action Buttons */}
-			<div className="px-4 py-2 border-t bg-gray-50 flex justify-between items-center">
+			{/* Expand/Collapse Indicator */}
+			<div className="px-4 py-2 border-t bg-gray-50 text-center">
 				<div className="text-xs text-gray-500">
 					{isExpanded ? 'Click to collapse' : 'Click to view details'}
 				</div>
-				<button
-					onClick={handleViewDetails}
-					className="bg-[var(--color-brand-primary)] text-white px-3 py-1 rounded text-xs font-medium hover:bg-[var(--color-brand-accent)] transition-colors"
-				>
-					View Route
-				</button>
 			</div>
 		</div>
 	);

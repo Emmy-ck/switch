@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import type { RouteMatch, MultiLegRouteMatch } from '@/lib/types';
 import RouteResult from './RouteResult';
 
@@ -13,14 +12,9 @@ type Props = {
 };
 
 export default function ResultsPage({ routes, multiLegRoutes = [], searchQuery }: Props) {
-	const router = useRouter();
 	const [expandedRouteId, setExpandedRouteId] = useState<string | null>(
 		routes.length > 0 ? routes[0].route.id : null
 	);
-
-	const handleBackToSearch = () => {
-		router.push('/');
-	};
 
 	const handleToggleExpand = (routeId: string) => {
 		setExpandedRouteId(expandedRouteId === routeId ? null : routeId);
@@ -42,17 +36,6 @@ export default function ResultsPage({ routes, multiLegRoutes = [], searchQuery }
 		<div className="max-w-4xl mx-auto p-4">
 			{/* Header */}
 			<div className="mb-6">
-				<div className="flex items-center justify-between mb-4">
-					<button
-						onClick={handleBackToSearch}
-						className="flex items-center space-x-2 text-[var(--color-brand-primary)] hover:text-[var(--color-brand-accent)] transition-colors"
-					>
-						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-						</svg>
-						<span className="text-sm font-medium">Back to Search</span>
-					</button>
-				</div>
 				<h1 className="text-2xl font-bold text-gray-900 mb-2">
 					Route Recommendations
 				</h1>

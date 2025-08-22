@@ -47,16 +47,33 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[color-mix(in_srgb,var(--color-brand-light)_30%,white_70%)]">
-      {/* Hero Section */}
-      <div className="bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] py-16">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 fade-in">
-            Navigate Nairobi with Ease!
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto slide-in-bottom">
-            Discover the fastest and most convenient routes across the city. 
-            Get real-time information about matatu routes, fares, and schedules.
-          </p>
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-[var(--color-brand-primary)] to-[var(--color-brand-accent)] text-[var(--color-brand-white)] px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="max-w-md mx-auto lg:max-w-2xl">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm opacity-90">Good evening</p>
+                <p className="text-sm sm:text-base font-semibold">Sarah Wanjiku</p>
+              </div>
+            </div>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight">
+              Navigate Nairobi<br />with Ease!
+            </h1>
+          </div>
         </div>
       </div>
 

@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { LocationInput, Button, Card, CardHeader, CardBody } from '@/components';
 import Footer from '@/components/Footer';
 
 export default function HomePage() {
+  const router = useRouter();
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -28,14 +30,19 @@ export default function HomePage() {
     if (!fromLocation.trim() || !toLocation.trim()) return;
 
     setIsSearching(true);
-    // TODO: Implement search logic
-    console.log('Searching from:', fromLocation, 'to:', toLocation);
     
-    // Simulate search delay
+    // Simulate search delay for better UX
     setTimeout(() => {
       setIsSearching(false);
-      // TODO: Navigate to results page or show results
-    }, 2000);
+      
+      // Navigate to results page with search parameters
+      const searchParams = new URLSearchParams({
+        from: fromLocation.trim(),
+        to: toLocation.trim()
+      });
+      
+      router.push(`/results?${searchParams.toString()}`);
+    }, 1500);
   };
 
   return (
@@ -44,7 +51,7 @@ export default function HomePage() {
       <div className="bg-[var(--color-brand-primary)] text-[var(--color-brand-white)] py-16">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 fade-in">
-            Find Your Matatu Route
+            Navigate Nairobi with Ease!
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto slide-in-bottom">
             Discover the fastest and most convenient routes across the city. 

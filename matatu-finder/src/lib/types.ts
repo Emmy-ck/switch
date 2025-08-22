@@ -42,22 +42,12 @@ export type RouteSearchParams = {
 	maxHops?: number; // number of permitted changes
 };
 
-export type RouteStage = {
-	fromStopId: string;
-	toStopId: string;
-	estimatedTime: number; // minutes
-	distance: number; // km
-	trafficLevel?: 'low' | 'medium' | 'high';
-};
-
 export type RouteMatch = {
 	route: Route;
 	fromStopId: string;
 	toStopId: string;
 	stopsBetween: string[];
 	estimatedFare: number;
-	stages?: RouteStage[];
-	totalDistance?: number;
 };
 
 export type MultiLegRouteMatch = {

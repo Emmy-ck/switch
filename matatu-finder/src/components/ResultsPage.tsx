@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import type { RouteMatch, MultiLegRouteMatch } from '@/lib/types';
-import RouteResult from './RouteResult';
+import { getStopById } from '@/lib/data';
 
 type Props = {
 	routes: RouteMatch[];
@@ -12,168 +14,282 @@ type Props = {
 };
 
 export default function ResultsPage({ routes, multiLegRoutes = [], searchQuery }: Props) {
-	const [expandedRouteId, setExpandedRouteId] = useState<string | null>(
-		routes.length > 0 ? routes[0].route.id : null
-	);
-
-	const handleToggleExpand = (routeId: string) => {
-		setExpandedRouteId(expandedRouteId === routeId ? null : routeId);
-	};
-
-	const allRoutes = [...routes];
-	
-	// Add multi-leg routes as individual entries for display
-	multiLegRoutes.forEach(multiLeg => {
-		multiLeg.legs.forEach(leg => {
-			allRoutes.push(leg);
-		});
-	});
-
-	// Sort routes by estimated fare (cheapest first)
-	const sortedRoutes = allRoutes.sort((a, b) => a.estimatedFare - b.estimatedFare);
+	const sortedRoutes = [...routes].sort((a, b) => a.estimatedFare - b.estimatedFare);
+	const mainRoute = sortedRoutes[0];
+	const alternativeRoutes = sortedRoutes.slice(1);
 
 	return (
-		<div className="max-w-4xl mx-auto p-4">
-			{/* Header */}
-			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-gray-900 mb-2">
-					Route Recommendations
+		<div className="min-h-screen" style={{ background: 'var(--color-brand-light)' }}>
+			<div className="max-w-7xl mx-auto p-6">
+				{/* Header */}
+				<h1 className="text-3xl font-bold mb-8" style={{ color: 'var(--color-brand-dark)' }}>
+					Results page
 				</h1>
-				{searchQuery && (
-					<p className="text-gray-600">
-						From <span className="font-medium">{searchQuery.from}</span> to{' '}
-						<span className="font-medium">{searchQuery.to}</span>
-					</p>
-				)}
-				<div className="mt-2 text-sm text-gray-500">
-					{sortedRoutes.length} route{sortedRoutes.length !== 1 ? 's' : ''} found
-				</div>
-			</div>
 
-			{/* Results Summary */}
-			<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-				<div className="bg-blue-50 p-4 rounded-lg">
-					<div className="text-sm text-blue-600 font-medium">Cheapest Route</div>
-					<div className="text-xl font-bold text-blue-900">
-						KES {Math.min(...sortedRoutes.map(r => r.estimatedFare))}
-					</div>
-					<div className="text-xs text-blue-600 mt-1">
-						Route {sortedRoutes[0]?.route.number}
-					</div>
-				</div>
-				
-				<div className="bg-green-50 p-4 rounded-lg">
-					<div className="text-sm text-green-600 font-medium">Fastest Route</div>
-					<div className="text-xl font-bold text-green-900">
-						{Math.min(...sortedRoutes.map(r => r.route.estimatedTime || 60))}m
-					</div>
-					<div className="text-xs text-green-600 mt-1">
-						Route {sortedRoutes.find(r => 
-							r.route.estimatedTime === Math.min(...sortedRoutes.map(rt => rt.route.estimatedTime || 60))
-						)?.route.number}
-					</div>
-				</div>
-				
-				<div className="bg-purple-50 p-4 rounded-lg">
-					<div className="text-sm text-purple-600 font-medium">Direct Routes</div>
-					<div className="text-xl font-bold text-purple-900">
-						{routes.length}
-					</div>
-					<div className="text-xs text-purple-600 mt-1">
-						No transfers needed
-					</div>
-				</div>
-			</div>
-
-			{/* Route Results */}
-			<div className="space-y-4">
-				{sortedRoutes.length === 0 ? (
-					<div className="text-center py-12">
-						<div className="text-gray-400 text-lg mb-2">No routes found</div>
-						<div className="text-gray-500 text-sm">
-							Try adjusting your search criteria or check for alternative stops nearby.
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					{/* Main Route Card - Left Side */}
+					<div className="lg:col-span-2">
+						{mainRoute && <MainRouteCard match={mainRoute} />}
+						
+						{/* Description */}
+						<div className="mt-6 p-4 rounded-lg" style={{ background: 'var(--color-brand-white)' }}>
+							<p style={{ color: 'var(--color-brand-dark)' }} className="text-sm leading-relaxed">
+								Main route is expanded with all the key details shown at a glance. The user can quickly 
+								see time, fare, matatu number and Sacco name.
+							</p>
 						</div>
 					</div>
-				) : (
-					<>
-						{/* Main/Recommended Route (First one, expanded by default) */}
-						<div className="mb-6">
-							<div className="flex items-center gap-2 mb-3">
-								<div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs font-bold">
-									RECOMMENDED
-								</div>
-								<div className="text-sm text-gray-600">Best overall option</div>
-							</div>
-							<RouteResult
-								match={sortedRoutes[0]}
-								isExpanded={expandedRouteId === sortedRoutes[0].route.id}
-								onToggleExpand={() => handleToggleExpand(sortedRoutes[0].route.id)}
-							/>
-						</div>
 
-						{/* Other Routes */}
-						{sortedRoutes.length > 1 && (
-							<div>
-								<h2 className="text-lg font-semibold text-gray-900 mb-4">
-									Alternative Routes
+					{/* Alternative Routes - Right Side */}
+					<div className="lg:col-span-1">
+						<div className="p-4 rounded-lg" style={{ background: 'var(--color-brand-primary)' }}>
+							<div className="flex items-center justify-between mb-4">
+								<h2 className="text-lg font-semibold" style={{ color: 'var(--color-brand-white)' }}>
+									Available routes
 								</h2>
-								<div className="space-y-3">
-									{sortedRoutes.slice(1).map((match, index) => (
-										<RouteResult
-											key={`${match.route.id}-${index}`}
-											match={match}
-											isExpanded={expandedRouteId === match.route.id}
-											onToggleExpand={() => handleToggleExpand(match.route.id)}
-										/>
-									))}
+								<div className="flex items-center gap-2" style={{ color: 'var(--color-brand-white)' }}>
+									<span className="text-sm">Kencom</span>
+									<div className="flex items-center gap-1">
+										<div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-brand-white)' }}></div>
+										<div className="w-8 h-px border-t-2 border-dashed" style={{ borderColor: 'var(--color-brand-white)' }}></div>
+										<div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-brand-white)' }}></div>
+									</div>
+									<span className="text-sm">Umoja 1</span>
 								</div>
 							</div>
-						)}
-					</>
-				)}
-			</div>
 
-			{/* Multi-leg Routes Section */}
-			{multiLegRoutes.length > 0 && (
-				<div className="mt-8">
-					<h2 className="text-lg font-semibold text-gray-900 mb-4">
-						Routes with Transfers
-					</h2>
-					<div className="space-y-4">
-						{multiLegRoutes.map((multiLeg, index) => (
-							<div key={index} className="border rounded-lg p-4 bg-orange-50">
-								<div className="flex items-center justify-between mb-3">
-									<div className="text-sm font-medium text-orange-800">
-										{multiLeg.legs.length} Transfer{multiLeg.legs.length > 2 ? 's' : ''}
-									</div>
-									<div className="text-lg font-bold text-orange-900">
-										KES {multiLeg.totalFare}
-									</div>
-								</div>
-								<div className="space-y-2">
-									{multiLeg.legs.map((leg, legIndex) => (
-										<div key={legIndex} className="text-sm">
-											<span className="font-medium">Leg {legIndex + 1}:</span>
-											<span className="ml-2">Route {leg.route.number} - {leg.route.name}</span>
-											<span className="ml-2 text-gray-600">(KES {leg.estimatedFare})</span>
-										</div>
-									))}
-								</div>
+							<div className="space-y-3">
+								{alternativeRoutes.map((route, index) => (
+									<AlternativeRouteCard key={index} match={route} />
+								))}
 							</div>
-						))}
+						</div>
+
+						{/* Description */}
+						<div className="mt-6 p-4 rounded-lg" style={{ background: 'var(--color-brand-white)' }}>
+							<p style={{ color: 'var(--color-brand-dark)' }} className="text-sm leading-relaxed">
+								Alternative routes are shown below the main route with simplified details to reduce 
+								information overload the card can expand if the user selects it.
+							</p>
+						</div>
 					</div>
 				</div>
-			)}
+			</div>
+		</div>
+	);
+}
 
-			{/* Footer Info */}
-			<div className="mt-8 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
-				<div className="font-medium mb-2">Important Notes:</div>
-				<ul className="space-y-1 text-xs">
-					<li>• Fares may vary during peak hours (7-9 AM, 5-7 PM)</li>
-					<li>• Travel times are estimates and may vary due to traffic conditions</li>
-					<li>• Always confirm route details with the conductor before boarding</li>
-					<li>• Keep small change ready for fare payment</li>
-				</ul>
+function MainRouteCard({ match }: { match: RouteMatch }) {
+	const { route, fromStopId, toStopId, estimatedFare } = match;
+	const fromStop = getStopById(fromStopId);
+	const toStop = getStopById(toStopId);
+
+	return (
+		<div className="rounded-lg p-6" style={{ background: 'var(--color-brand-white)' }}>
+			{/* Header Icons */}
+			<div className="flex items-center gap-4 mb-6">
+				<div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--color-brand-primary)' }}>
+					<svg className="w-4 h-4" style={{ color: 'var(--color-brand-white)' }} fill="currentColor" viewBox="0 0 20 20">
+						<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+					</svg>
+				</div>
+				<div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--color-brand-accent)' }}>
+					<svg className="w-4 h-4" style={{ color: 'var(--color-brand-white)' }} fill="currentColor" viewBox="0 0 20 20">
+						<path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+					</svg>
+				</div>
+				<div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--color-brand-accent)' }}>
+					<svg className="w-4 h-4" style={{ color: 'var(--color-brand-white)' }} fill="currentColor" viewBox="0 0 20 20">
+						<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"/>
+					</svg>
+				</div>
+				<div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--color-brand-accent)' }}>
+					<svg className="w-4 h-4" style={{ color: 'var(--color-brand-white)' }} fill="currentColor" viewBox="0 0 20 20">
+						<path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+					</svg>
+				</div>
+				<div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--color-brand-accent)' }}>
+					<svg className="w-4 h-4" style={{ color: 'var(--color-brand-white)' }} fill="currentColor" viewBox="0 0 20 20">
+						<path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+					</svg>
+				</div>
+			</div>
+
+			{/* Route Details */}
+			<div className="grid grid-cols-2 gap-6 mb-6">
+				<div>
+					<div className="flex items-center gap-2 mb-2">
+						<div className="w-4 h-4 rounded-full" style={{ background: 'var(--color-brand-primary)' }}></div>
+						<span className="text-sm font-medium" style={{ color: 'var(--color-brand-dark)' }}>Ummonner / Utime</span>
+					</div>
+					<div className="text-2xl font-bold" style={{ color: 'var(--color-brand-dark)' }}>35/60</div>
+				</div>
+				<div>
+					<div className="flex items-center gap-2 mb-2">
+						<div className="w-4 h-4 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span className="text-sm font-medium" style={{ color: 'var(--color-brand-dark)' }}>Location</span>
+					</div>
+					<div className="text-sm font-medium" style={{ color: 'var(--color-brand-dark)' }}>Tusker/ Ronald Ngala</div>
+				</div>
+			</div>
+
+			<div className="grid grid-cols-2 gap-6 mb-6">
+				<div>
+					<div className="flex items-center gap-2 mb-2">
+						<div className="w-4 h-4 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span className="text-sm font-medium" style={{ color: 'var(--color-brand-dark)' }}>Travel time</span>
+					</div>
+					<div className="text-sm" style={{ color: 'var(--color-brand-dark)' }}>
+						<span className="font-bold">10:00 AM-10:45 AM</span> | 45 min
+					</div>
+				</div>
+				<div>
+					<div className="flex items-center gap-2 mb-2">
+						<div className="w-4 h-4 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span className="text-sm font-medium" style={{ color: 'var(--color-brand-dark)' }}>Estimated fare</span>
+					</div>
+					<div className="text-sm font-bold" style={{ color: 'var(--color-brand-dark)' }}>60-100 KES</div>
+				</div>
+			</div>
+
+			<div className="grid grid-cols-2 gap-6 mb-6">
+				<div>
+					<div className="flex items-center gap-2 mb-2">
+						<div className="w-4 h-4 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span className="text-sm font-medium" style={{ color: 'var(--color-brand-dark)' }}>Pick Hours</span>
+					</div>
+					<div className="text-sm font-bold" style={{ color: 'var(--color-brand-dark)' }}>4:00 PM - 8:00 PM</div>
+				</div>
+				<div>
+					<div className="flex items-center gap-2 mb-2">
+						<div className="w-4 h-4 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span className="text-sm font-medium" style={{ color: 'var(--color-brand-dark)' }}>Connections</span>
+					</div>
+					<div className="text-2xl font-bold" style={{ color: 'var(--color-brand-dark)' }}>1</div>
+				</div>
+			</div>
+
+			{/* Route Visualization */}
+			<div className="mt-6">
+				<div className="flex items-center justify-center gap-4 p-4 rounded-lg" style={{ background: 'var(--color-brand-light)' }}>
+					<div className="text-center">
+						<div className="w-8 h-8 rounded-full flex items-center justify-center mb-2" style={{ background: 'var(--color-brand-primary)' }}>
+							<span className="text-xs font-bold" style={{ color: 'var(--color-brand-white)' }}>46H</span>
+						</div>
+						<div className="text-xs" style={{ color: 'var(--color-brand-dark)' }}>Huruma sacco</div>
+					</div>
+					
+					<div className="flex items-center gap-2">
+						<span className="text-xs" style={{ color: 'var(--color-brand-dark)' }}>Travel time</span>
+						<div className="text-xs font-bold" style={{ color: 'var(--color-brand-dark)' }}>50 min</div>
+					</div>
+					
+					<div className="flex items-center gap-2">
+						<div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: 'var(--color-brand-primary)' }}>
+							<span className="text-xs font-bold" style={{ color: 'var(--color-brand-white)' }}>46H</span>
+						</div>
+						<svg className="w-4 h-4" style={{ color: 'var(--color-brand-primary)' }} fill="currentColor" viewBox="0 0 20 20">
+							<path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>
+						</svg>
+						<div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: 'var(--color-brand-accent)' }}>
+							<span className="text-xs font-bold" style={{ color: 'var(--color-brand-white)' }}>17AYK</span>
+						</div>
+						<svg className="w-4 h-4" style={{ color: 'var(--color-brand-primary)' }} fill="currentColor" viewBox="0 0 20 20">
+							<path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>
+						</svg>
+						<div className="w-4 h-4 rounded-full" style={{ background: 'var(--color-brand-primary)' }}></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function AlternativeRouteCard({ match }: { match: RouteMatch }) {
+	const { route, estimatedFare } = match;
+
+	return (
+		<div className="p-3 rounded-lg" style={{ background: 'var(--color-brand-white)' }}>
+			<div className="grid grid-cols-3 gap-3 text-xs">
+				<div>
+					<div className="flex items-center gap-1 mb-1">
+						<div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-brand-primary)' }}></div>
+						<span style={{ color: 'var(--color-brand-dark)' }}>Ummonner / Utime</span>
+					</div>
+					<div className="font-bold" style={{ color: 'var(--color-brand-dark)' }}>35/60</div>
+				</div>
+				<div>
+					<div className="flex items-center gap-1 mb-1">
+						<div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span style={{ color: 'var(--color-brand-dark)' }}>Location</span>
+					</div>
+					<div className="font-medium" style={{ color: 'var(--color-brand-dark)' }}>Tusker/ Ronald Ngala</div>
+				</div>
+				<div>
+					<div className="flex items-center gap-1 mb-1">
+						<div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span style={{ color: 'var(--color-brand-dark)' }}>Travel time</span>
+					</div>
+					<div style={{ color: 'var(--color-brand-dark)' }}>
+						<span className="font-bold">10:00 AM-10:45 AM</span> | 45 min
+					</div>
+				</div>
+			</div>
+			
+			<div className="grid grid-cols-3 gap-3 text-xs mt-3">
+				<div>
+					<div className="flex items-center gap-1 mb-1">
+						<div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span style={{ color: 'var(--color-brand-dark)' }}>Estimated fare</span>
+					</div>
+					<div className="font-bold" style={{ color: 'var(--color-brand-dark)' }}>60-100 KES</div>
+				</div>
+				<div>
+					<div className="flex items-center gap-1 mb-1">
+						<div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span style={{ color: 'var(--color-brand-dark)' }}>Pick Hours</span>
+					</div>
+					<div className="font-bold" style={{ color: 'var(--color-brand-dark)' }}>4:00 PM - 8:00 PM</div>
+				</div>
+				<div>
+					<div className="flex items-center gap-1 mb-1">
+						<div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-brand-accent)' }}></div>
+						<span style={{ color: 'var(--color-brand-dark)' }}>Connections</span>
+					</div>
+					<div className="font-bold" style={{ color: 'var(--color-brand-dark)' }}>1</div>
+				</div>
+			</div>
+
+			{/* Route Info */}
+			<div className="mt-3 pt-3 border-t border-gray-200">
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-2">
+						<div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: 'var(--color-brand-primary)' }}>
+							<span className="text-xs font-bold" style={{ color: 'var(--color-brand-white)' }}>46H</span>
+						</div>
+						<span className="text-xs" style={{ color: 'var(--color-brand-dark)' }}>Huruma sacco</span>
+					</div>
+					<div className="flex items-center gap-2">
+						<span className="text-xs" style={{ color: 'var(--color-brand-dark)' }}>Travel time</span>
+						<span className="text-xs font-bold" style={{ color: 'var(--color-brand-dark)' }}>50 min</span>
+					</div>
+				</div>
+				
+				<div className="flex items-center justify-center gap-2 mt-2">
+					<div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: 'var(--color-brand-primary)' }}>
+						<span className="text-xs font-bold" style={{ color: 'var(--color-brand-white)' }}>46H</span>
+					</div>
+					<svg className="w-3 h-3" style={{ color: 'var(--color-brand-primary)' }} fill="currentColor" viewBox="0 0 20 20">
+						<path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>
+					</svg>
+					<div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: 'var(--color-brand-accent)' }}>
+						<span className="text-xs font-bold" style={{ color: 'var(--color-brand-white)' }}>17AYK</span>
+					</div>
+					<svg className="w-3 h-3" style={{ color: 'var(--color-brand-primary)' }} fill="currentColor" viewBox="0 0 20 20">
+						<path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>
+					</svg>
+					<div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-brand-primary)' }}></div>
+				</div>
 			</div>
 		</div>
 	);

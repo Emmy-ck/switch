@@ -7,6 +7,4 @@ export { default as ResultsList } from './ResultsList';
 export { default as RouteCard } from './RouteCard';
 export { default as RouteResult } from './RouteResult';
 export { default as ResultsPage } from './ResultsPage';
-export { default as RouteBreakdown } from './RouteBreakdown';
-export { default as RouteMapView } from './RouteMapView';
 export { default as LocationInput } from './LocationInput';

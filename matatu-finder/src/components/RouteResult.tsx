@@ -20,11 +20,21 @@ export default function RouteResult({ match, isExpanded = false, onToggleExpand 
 	};
 
 	return (
-		<div 
+		<div
 			className={`border rounded-lg shadow-sm bg-white transition-all duration-200 cursor-pointer hover:shadow-md ${
 				isExpanded ? 'ring-2 ring-blue-500 shadow-lg' : ''
 			}`}
+			role="button"
+			tabIndex={0}
+			aria-expanded={isExpanded}
+			aria-label={`View details for route ${route.number} from ${fromStop?.name ?? fromStopId} to ${toStop?.name ?? toStopId}`}
 			onClick={onToggleExpand}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					onToggleExpand?.();
+				}
+			}}
 		>
 			{/* Main Route Header */}
 			<div className="p-4">
@@ -47,6 +57,12 @@ export default function RouteResult({ match, isExpanded = false, onToggleExpand 
 							</div>
 						)}
 					</div>
+				</div>
+
+				{/* Recommended Stage */}
+				<div className="mt-1 text-sm text-gray-700">
+					<span className="font-medium">Board at:</span>{' '}
+					<span>{fromStop?.name || fromStopId}</span>
 				</div>
 
 				{/* Key Details Row */}

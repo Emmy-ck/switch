@@ -8,3 +8,4 @@ export { default as RouteCard } from './RouteCard';
 export { default as RouteResult } from './RouteResult';
 export { default as ResultsPage } from './ResultsPage';
 export { default as LocationInput } from './LocationInput';
+export { default as SmartLocationInput } from './SmartLocationInput';

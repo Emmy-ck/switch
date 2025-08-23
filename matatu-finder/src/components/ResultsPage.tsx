@@ -90,8 +90,24 @@ export default function ResultsPage({ routes, multiLegRoutes = [], searchQuery }
 				{sortedRoutes.length === 0 ? (
 					<div className="text-center py-12">
 						<div className="text-gray-400 text-lg mb-2">No routes found</div>
-						<div className="text-gray-500 text-sm">
+						<div className="text-gray-500 text-sm mb-4">
 							Try adjusting your search criteria or check for alternative stops nearby.
+						</div>
+						<div className="flex items-center justify-center gap-3">
+							<button
+								onClick={() => window.history.back()}
+								className="px-4 py-2 rounded border text-gray-700 hover:bg-gray-50"
+								aria-label="Go back to previous page"
+							>
+								Go Back
+							</button>
+							<a
+								href="/"
+								className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+								aria-label="Start a new search"
+							>
+								Start Over
+							</a>
 						</div>
 					</div>
 				) : (

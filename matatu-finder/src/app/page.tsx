@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LocationInput, Button, Card, CardHeader, CardBody } from '@/components';
+import { SmartLocationInput, Button, Card, CardBody } from '@/components';
 import Footer from '@/components/Footer';
-import UseLocationButton from '@/components/UseLocationButton';
 
 export default function HomePage() {
   const router = useRouter();
@@ -18,17 +17,13 @@ export default function HomePage() {
     { name: 'CBD', category: 'Landmarks', description: 'Central Business District with key landmarks and offices.' },
     { name: 'Gikomba Market', category: 'Markets', description: 'Largest open-air market known for bargains.' },
     { name: 'Uhuru Park', category: 'Parks', description: 'Green space perfect for relaxation and walks.' },
-    { name: 'National Museum', category: 'Museums', description: 'Explore Kenya\'s rich cultural and natural heritage.' },
+    { name: 'National Museum', category: 'Museums', description: "Explore Kenya's rich cultural and natural heritage." },
     { name: 'Westgate Mall', category: 'Markets', description: 'Modern shopping and dining destination in Westlands.' },
     { name: 'KICC', category: 'Landmarks', description: 'Iconic conference center with panoramic city views.' },
   ];
   const filteredDestinations = selectedCategory === 'All'
     ? destinations
     : destinations.filter((d) => d.category === selectedCategory);
-
-  const handleLocationFound = (location: string) => {
-    setFromLocation(location);
-  };
 
   const handleDestinationClick = (destinationName: string) => {
     setToLocation(destinationName);
@@ -97,29 +92,25 @@ export default function HomePage() {
             <form onSubmit={handleSearch}>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <LocationInput
-                      label="From"
-                      value={fromLocation}
-                      onChange={(e) => setFromLocation(e.target.value)}
-                      placeholder="Enter starting point"
-                      name="from"
-                      id="from"
-                      autoComplete="off"
-                    />
-                    <UseLocationButton 
-                      onLocationFound={handleLocationFound}
-                      disabled={isSearching}
-                    />
-                  </div>
-                  <LocationInput
+                  <SmartLocationInput
+                    label="From"
+                    value={fromLocation}
+                    onChange={setFromLocation}
+                    placeholder="Enter starting point"
+                    name="from"
+                    id="from"
+                    autoComplete="off"
+                    disabled={isSearching}
+                  />
+                  <SmartLocationInput
                     label="To"
                     value={toLocation}
-                    onChange={(e) => setToLocation(e.target.value)}
+                    onChange={setToLocation}
                     placeholder="Enter destination"
                     name="to"
                     id="to"
                     autoComplete="off"
+                    disabled={isSearching}
                   />
                 </div>
                 <Button

@@ -27,63 +27,45 @@ export default function HomePage() {
     ? destinations
     : destinations.filter((d) => d.category === selectedCategory);
 
-  const getCurrentLocation = async () => {
-    console.log('getCurrentLocation called');
+  const getCurrentLocation = () => {
     setIsGettingLocation(true);
     setLocationError('');
-
-    try {
-      // Check if geolocation is supported
-      if (!navigator?.geolocation) {
-        throw new Error('Geolocation is not supported by this browser');
-      }
-
-      console.log('Requesting geolocation...');
-      
-      // Wrap geolocation in a Promise for better handling
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            console.log('Location success:', position);
-            resolve(position);
-          },
-          (error) => {
-            console.log('Location error:', error);
-            reject(error);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 60000
+    
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setFromLocation(`Current Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
+          setIsGettingLocation(false);
+        },
+        function(error) {
+          let message = 'Location error: ';
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              message += 'Permission denied';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              message += 'Position unavailable';
+              break;
+            case error.TIMEOUT:
+              message += 'Request timeout';
+              break;
+            default:
+              message += 'Unknown error';
+              break;
           }
-        );
-      });
-
-      const { latitude, longitude } = position.coords;
-      const locationName = `My Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-      console.log('Setting location:', locationName);
-      
-      setFromLocation(locationName);
-      setLocationError('');
-      
-    } catch (error: any) {
-      console.log('Caught error:', error);
-      let errorMessage = '';
-      
-      if (error.code === 1) {
-        errorMessage = 'Location access denied. Please allow location permissions in your browser.';
-      } else if (error.code === 2) {
-        errorMessage = 'Location unavailable. Please check your GPS/network connection.';
-      } else if (error.code === 3) {
-        errorMessage = 'Location request timed out. Please try again.';
-      } else if (error.message) {
-        errorMessage = error.message;
-      } else {
-        errorMessage = 'Failed to get location. Please try again or enter manually.';
-      }
-      
-      setLocationError(errorMessage);
-    } finally {
+          setLocationError(message);
+          setIsGettingLocation(false);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      setLocationError('Geolocation not supported');
       setIsGettingLocation(false);
     }
   };
@@ -168,25 +150,37 @@ export default function HomePage() {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          console.log('Button clicked');
-                          getCurrentLocation();
-                        }}
+                        onClick={getCurrentLocation}
                         disabled={isGettingLocation}
-                        className={`flex items-center gap-2 px-3 py-2 text-sm border rounded-md transition-colors ${
-                          isGettingLocation 
-                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
-                            : 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600 hover:border-blue-600'
-                        }`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '8px 12px',
+                          fontSize: '14px',
+                          border: '1px solid #3b82f6',
+                          borderRadius: '6px',
+                          backgroundColor: isGettingLocation ? '#f3f4f6' : '#3b82f6',
+                          color: isGettingLocation ? '#9ca3af' : 'white',
+                          cursor: isGettingLocation ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s'
+                        }}
                       >
                         {isGettingLocation ? (
                           <>
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <div style={{
+                              width: '16px',
+                              height: '16px',
+                              border: '2px solid #9ca3af',
+                              borderTop: '2px solid transparent',
+                              borderRadius: '50%',
+                              animation: 'spin 1s linear infinite'
+                            }}></div>
                             Getting Location...
                           </>
                         ) : (
                           <>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>

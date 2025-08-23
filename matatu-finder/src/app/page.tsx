@@ -27,56 +27,65 @@ export default function HomePage() {
     ? destinations
     : destinations.filter((d) => d.category === selectedCategory);
 
-  const getCurrentLocation = () => {
+  const getCurrentLocation = async () => {
+    console.log('getCurrentLocation called');
     setIsGettingLocation(true);
     setLocationError('');
 
-    // Check if geolocation is supported
-    if (!navigator.geolocation) {
-      setLocationError('Geolocation is not supported by this browser');
-      setIsGettingLocation(false);
-      return;
-    }
-
-    // Get current position
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        
-        // Create a readable location string
-        const locationName = `My Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-        
-        setFromLocation(locationName);
-        setLocationError('');
-        setIsGettingLocation(false);
-      },
-      (error) => {
-        let errorMessage = '';
-        
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = 'Location permission denied. Please allow location access and try again.';
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information is unavailable. Please try again.';
-            break;
-          case error.TIMEOUT:
-            errorMessage = 'Location request timed out. Please try again.';
-            break;
-          default:
-            errorMessage = 'An unknown error occurred while retrieving location.';
-            break;
-        }
-        
-        setLocationError(errorMessage);
-        setIsGettingLocation(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 60000
+    try {
+      // Check if geolocation is supported
+      if (!navigator?.geolocation) {
+        throw new Error('Geolocation is not supported by this browser');
       }
-    );
+
+      console.log('Requesting geolocation...');
+      
+      // Wrap geolocation in a Promise for better handling
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log('Location success:', position);
+            resolve(position);
+          },
+          (error) => {
+            console.log('Location error:', error);
+            reject(error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 60000
+          }
+        );
+      });
+
+      const { latitude, longitude } = position.coords;
+      const locationName = `My Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+      console.log('Setting location:', locationName);
+      
+      setFromLocation(locationName);
+      setLocationError('');
+      
+    } catch (error: any) {
+      console.log('Caught error:', error);
+      let errorMessage = '';
+      
+      if (error.code === 1) {
+        errorMessage = 'Location access denied. Please allow location permissions in your browser.';
+      } else if (error.code === 2) {
+        errorMessage = 'Location unavailable. Please check your GPS/network connection.';
+      } else if (error.code === 3) {
+        errorMessage = 'Location request timed out. Please try again.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      } else {
+        errorMessage = 'Failed to get location. Please try again or enter manually.';
+      }
+      
+      setLocationError(errorMessage);
+    } finally {
+      setIsGettingLocation(false);
+    }
   };
 
   const handleDestinationClick = (destinationName: string) => {
@@ -159,19 +168,31 @@ export default function HomePage() {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={getCurrentLocation}
+                        onClick={() => {
+                          console.log('Button clicked');
+                          getCurrentLocation();
+                        }}
                         disabled={isGettingLocation}
                         className={`flex items-center gap-2 px-3 py-2 text-sm border rounded-md transition-colors ${
                           isGettingLocation 
                             ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+                            : 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600 hover:border-blue-600'
                         }`}
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        {isGettingLocation ? 'Getting Location...' : 'Use My Location'}
+                        {isGettingLocation ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Getting Location...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Use My Location
+                          </>
+                        )}
                       </button>
                     </div>
                     {locationError && (

@@ -10,8 +10,6 @@ export default function HomePage() {
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [locationError, setLocationError] = useState('');
   const categories = ['All', 'Landmarks', 'Markets', 'Parks', 'Museums'] as const;
   type Category = typeof categories[number];
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
@@ -26,53 +24,6 @@ export default function HomePage() {
   const filteredDestinations = selectedCategory === 'All'
     ? destinations
     : destinations.filter((d) => d.category === selectedCategory);
-
-  const getCurrentLocation = () => {
-    setIsGettingLocation(true);
-    setLocationError('');
-    
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        function(position) {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          setFromLocation(`Current Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
-          setIsGettingLocation(false);
-        },
-        function(error) {
-          let message = 'Location error: ';
-          switch(error.code) {
-            case error.PERMISSION_DENIED:
-              message += 'Permission denied';
-              break;
-            case error.POSITION_UNAVAILABLE:
-              message += 'Position unavailable';
-              break;
-            case error.TIMEOUT:
-              message += 'Request timeout';
-              break;
-            default:
-              message += 'Unknown error';
-              break;
-          }
-          setLocationError(message);
-          setIsGettingLocation(false);
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 10000,
-          maximumAge: 0
-        }
-      );
-    } else {
-      setLocationError('Geolocation not supported');
-      setIsGettingLocation(false);
-    }
-  };
-
-  const handleDestinationClick = (destinationName: string) => {
-    setToLocation(destinationName);
-  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,64 +88,15 @@ export default function HomePage() {
             <form onSubmit={handleSearch}>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <LocationInput
-                      label="From"
-                      value={fromLocation}
-                      onChange={(e) => setFromLocation(e.target.value)}
-                      placeholder="Enter starting point"
-                      name="from"
-                      id="from"
-                      autoComplete="off"
-                    />
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={getCurrentLocation}
-                        disabled={isGettingLocation}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '8px 12px',
-                          fontSize: '14px',
-                          border: '1px solid #3b82f6',
-                          borderRadius: '6px',
-                          backgroundColor: isGettingLocation ? '#f3f4f6' : '#3b82f6',
-                          color: isGettingLocation ? '#9ca3af' : 'white',
-                          cursor: isGettingLocation ? 'not-allowed' : 'pointer',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {isGettingLocation ? (
-                          <>
-                            <div style={{
-                              width: '16px',
-                              height: '16px',
-                              border: '2px solid #9ca3af',
-                              borderTop: '2px solid transparent',
-                              borderRadius: '50%',
-                              animation: 'spin 1s linear infinite'
-                            }}></div>
-                            Getting Location...
-                          </>
-                        ) : (
-                          <>
-                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            Use My Location
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    {locationError && (
-                      <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
-                        {locationError}
-                      </div>
-                    )}
-                  </div>
+                  <LocationInput
+                    label="From"
+                    value={fromLocation}
+                    onChange={(e) => setFromLocation(e.target.value)}
+                    placeholder="Enter starting point"
+                    name="from"
+                    id="from"
+                    autoComplete="off"
+                  />
                   <LocationInput
                     label="To"
                     value={toLocation}
@@ -252,19 +154,13 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredDestinations.map((dest) => (
-            <div 
-              key={dest.name} 
-              className="cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105"
-              onClick={() => handleDestinationClick(dest.name)}
-            >
-              <Card className="text-left h-full">
-                <CardBody className="p-3">
-                  <h3 className="text-base font-semibold text-[var(--color-brand-dark)] mb-1">{dest.name}</h3>
-                  <p className="text-xs text-[var(--color-brand-primary)] mb-1.5">{dest.description}</p>
-                  <span className="inline-block text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
-                </CardBody>
-              </Card>
-            </div>
+            <Card key={dest.name} className="text-left">
+              <CardBody className="p-3">
+                <h3 className="text-base font-semibold text-[var(--color-brand-dark)] mb-1">{dest.name}</h3>
+                <p className="text-xs text-[var(--color-brand-primary)] mb-1.5">{dest.description}</p>
+                <span className="inline-block text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
+              </CardBody>
+            </Card>
           ))}
         </div>
       </div>

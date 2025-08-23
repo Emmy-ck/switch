@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LocationInput, Button, Card, CardHeader, CardBody } from '@/components';
 import Footer from '@/components/Footer';
+import UseLocationButton from '@/components/UseLocationButton';
 
 export default function HomePage() {
   const router = useRouter();
@@ -24,6 +25,14 @@ export default function HomePage() {
   const filteredDestinations = selectedCategory === 'All'
     ? destinations
     : destinations.filter((d) => d.category === selectedCategory);
+
+  const handleLocationFound = (location: string) => {
+    setFromLocation(location);
+  };
+
+  const handleDestinationClick = (destinationName: string) => {
+    setToLocation(destinationName);
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,15 +97,21 @@ export default function HomePage() {
             <form onSubmit={handleSearch}>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <LocationInput
-                    label="From"
-                    value={fromLocation}
-                    onChange={(e) => setFromLocation(e.target.value)}
-                    placeholder="Enter starting point"
-                    name="from"
-                    id="from"
-                    autoComplete="off"
-                  />
+                  <div className="space-y-3">
+                    <LocationInput
+                      label="From"
+                      value={fromLocation}
+                      onChange={(e) => setFromLocation(e.target.value)}
+                      placeholder="Enter starting point"
+                      name="from"
+                      id="from"
+                      autoComplete="off"
+                    />
+                    <UseLocationButton 
+                      onLocationFound={handleLocationFound}
+                      disabled={isSearching}
+                    />
+                  </div>
                   <LocationInput
                     label="To"
                     value={toLocation}
@@ -154,13 +169,28 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredDestinations.map((dest) => (
-            <Card key={dest.name} className="text-left">
-              <CardBody className="p-3">
-                <h3 className="text-base font-semibold text-[var(--color-brand-dark)] mb-1">{dest.name}</h3>
-                <p className="text-xs text-[var(--color-brand-primary)] mb-1.5">{dest.description}</p>
-                <span className="inline-block text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
-              </CardBody>
-            </Card>
+            <div 
+              key={dest.name} 
+              className="cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105"
+              onClick={() => handleDestinationClick(dest.name)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleDestinationClick(dest.name);
+                }
+              }}
+              aria-label={`Select ${dest.name} as destination`}
+            >
+              <Card className="text-left h-full">
+                <CardBody className="p-3">
+                  <h3 className="text-base font-semibold text-[var(--color-brand-dark)] mb-1">{dest.name}</h3>
+                  <p className="text-xs text-[var(--color-brand-primary)] mb-1.5">{dest.description}</p>
+                  <span className="inline-block text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-brand-light)] text-[var(--color-brand-dark)]">{dest.category}</span>
+                </CardBody>
+              </Card>
+            </div>
           ))}
         </div>
       </div>

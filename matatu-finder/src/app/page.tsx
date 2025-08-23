@@ -27,53 +27,54 @@ export default function HomePage() {
     ? destinations
     : destinations.filter((d) => d.category === selectedCategory);
 
-  const getCurrentLocation = async () => {
+  const getCurrentLocation = () => {
     setIsGettingLocation(true);
     setLocationError('');
 
+    // Check if geolocation is supported
     if (!navigator.geolocation) {
-      setLocationError('GPS not supported by this browser');
+      setLocationError('Geolocation is not supported by this browser');
       setIsGettingLocation(false);
       return;
     }
 
+    // Get current position
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          // Simulate reverse geocoding - in real app, use Google Maps API or similar
-          const { latitude, longitude } = position.coords;
-          
-          // Mock location name based on coordinates (replace with actual reverse geocoding)
-          const locationName = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-          
-          setFromLocation(locationName);
-          setLocationError('');
-          setIsGettingLocation(false);
-        } catch (error) {
-          setLocationError('Failed to get location name');
-          setIsGettingLocation(false);
-        }
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        // Create a readable location string
+        const locationName = `My Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+        
+        setFromLocation(locationName);
+        setLocationError('');
+        setIsGettingLocation(false);
       },
       (error) => {
-        let errorMessage = 'Failed to get location';
+        let errorMessage = '';
+        
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Location access denied. Please enable location permissions.';
+            errorMessage = 'Location permission denied. Please allow location access and try again.';
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information unavailable.';
+            errorMessage = 'Location information is unavailable. Please try again.';
             break;
           case error.TIMEOUT:
-            errorMessage = 'Location request timed out.';
+            errorMessage = 'Location request timed out. Please try again.';
+            break;
+          default:
+            errorMessage = 'An unknown error occurred while retrieving location.';
             break;
         }
+        
         setLocationError(errorMessage);
         setIsGettingLocation(false);
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
+        timeout: 15000,
+        maximumAge: 60000
       }
     );
   };
@@ -156,21 +157,22 @@ export default function HomePage() {
                       autoComplete="off"
                     />
                     <div className="flex items-center gap-2">
-                      <Button
+                      <button
                         type="button"
-                        variant="outline"
-                        size="sm"
                         onClick={getCurrentLocation}
-                        loading={isGettingLocation}
                         disabled={isGettingLocation}
-                        className="flex items-center gap-2"
+                        className={`flex items-center gap-2 px-3 py-2 text-sm border rounded-md transition-colors ${
+                          isGettingLocation 
+                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+                        }`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         {isGettingLocation ? 'Getting Location...' : 'Use My Location'}
-                      </Button>
+                      </button>
                     </div>
                     {locationError && (
                       <div className="text-sm text-red-600 bg-red-50 p-2 rounded">

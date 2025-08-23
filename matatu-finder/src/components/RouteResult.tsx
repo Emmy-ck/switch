@@ -12,7 +12,8 @@ export default function RouteResult({ match, isExpanded = false, onToggleExpand 
 	const { route, fromStopId, toStopId, stopsBetween, estimatedFare } = match;
 	const fromStop = getStopById(fromStopId);
 	const toStop = getStopById(toStopId);
-
+	
+	// Format time for display
 	const formatTime = (minutes: number) => {
 		const hours = Math.floor(minutes / 60);
 		const mins = minutes % 60;
@@ -59,11 +60,13 @@ export default function RouteResult({ match, isExpanded = false, onToggleExpand 
 					</div>
 				</div>
 
-				{/* Recommended Stage */}
-				<div className="mt-1 text-sm text-gray-700">
-					<span className="font-medium">Board at:</span>{' '}
-					<span>{fromStop?.name || fromStopId}</span>
-				</div>
+				{/* Recommended Boarding Point */}
+				{fromStop && (
+					<div className="mt-1 text-sm text-gray-700">
+						<span className="font-medium">Board at:</span>{' '}
+						<span>{fromStop.name}</span>
+					</div>
+				)}
 
 				{/* Key Details Row */}
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">

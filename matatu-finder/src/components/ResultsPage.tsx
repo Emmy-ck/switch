@@ -89,17 +89,17 @@ export default function ResultsPage({ routes, multiLegRoutes = [], searchQuery }
 			<div className="space-y-4">
 				{sortedRoutes.length === 0 ? (
 					<div className="text-center py-12">
-						<div className="text-gray-400 text-lg mb-2">No routes found</div>
-						<div className="text-gray-500 text-sm mb-4">
-							Try adjusting your search criteria or check for alternative stops nearby.
+						<div className="text-gray-400 text-lg font-medium mb-3">No routes found</div>
+						<div className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
+							We couldn't find any direct routes. Try adjusting your search criteria or check for alternative stops nearby.
 						</div>
-						<div className="flex items-center justify-center gap-3">
+						<div className="flex flex-col sm:flex-row justify-center gap-3">
 							<button
 								onClick={() => window.history.back()}
-								className="px-4 py-2 rounded border text-gray-700 hover:bg-gray-50"
+								className="px-4 py-2 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors"
 								aria-label="Go back to previous page"
 							>
-								Go Back
+								← Back to Search
 							</button>
 							<a
 								href="/"
